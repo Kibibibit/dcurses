@@ -9,9 +9,12 @@ class Ch {
   Ch(this.value, [this.modifiers = const []]);
 
   @override
+  int get hashCode => "Ch$value".hashCode;
+
+  @override
   bool operator== (dynamic other) {
     if (other is Ch) {
-      return value == other.value;
+      return hashCode==other.hashCode;
     }
     return false;
   }

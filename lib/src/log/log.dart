@@ -20,7 +20,7 @@ class Log {
     return "${dateTime.hour}-${dateTime.minute}-${dateTime.second}";
   } 
 
-  static final String _start = "${_dateTimeStringLong(DateTime.now())}";
+  static final String _start = _dateTimeStringLong(DateTime.now());
 
   String _level(LogLevel level) {
     return "[${level.name.toUpperCase()}]";

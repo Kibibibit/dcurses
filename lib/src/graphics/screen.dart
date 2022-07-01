@@ -6,7 +6,7 @@ import 'window.dart';
 
 class Screen {
   static final String stdscrLabel = ":::STDSCR:::";
-  Map<String, Window> _windows = {};
+  final Map<String, Window> _windows = {};
 
   late final Window stdscr;
   late final int _lines, _columns;

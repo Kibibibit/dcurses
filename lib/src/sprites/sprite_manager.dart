@@ -4,7 +4,6 @@ import 'dart:io';
 
 import '../graphics/ch/ch.dart';
 import '../graphics/ch/modifier.dart';
-import '../utils/codeunitof.dart';
 import 'sprite.dart';
 
 class SpriteManager {
@@ -14,7 +13,7 @@ class SpriteManager {
 
   static late Map<String, List<List<Ch>>> _spriteData;
 
-  SpriteManager() {}
+  SpriteManager();
 
   static void load() {
     _spriteData = {};
