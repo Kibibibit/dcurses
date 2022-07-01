@@ -1,10 +1,12 @@
-import '../utils/codeunitof.dart';
+import '../utils/code_unit_of.dart';
 import 'ch/ch.dart';
 import 'ch/modifier.dart';
 
 class Border {
   static Border blank([List<Modifier> modifiers = const[]]) => Border(" ", " ", " ", " ", " ", " ", " ", " ", modifiers);
   static Border thin([List<Modifier> modifiers = const[]]) => Border("─", "─", "│", "│", "┌", "┐", "└", "┘", modifiers);
+  static Border rounded([List<Modifier> modifiers = const[]]) => Border("─", "─", "│", "│", "╭", "╮", "╰", "╯", modifiers);
+  static Border thick([List<Modifier> modifiers = const[]]) => Border("━","━","┃","┃","┏","┓","┗","┛",modifiers);
   static Border double([List<Modifier> modifiers = const[]]) => Border("═","═","║","║","╔","╗","╚","╝",modifiers);
 
 

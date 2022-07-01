@@ -2,7 +2,7 @@
 
 import '../utils/clone_list.dart';
 import '../sprites/sprite.dart';
-import '../utils/emptybuffer.dart';
+import '../utils/empty_buffer.dart';
 import 'border.dart';
 import 'ch/ch.dart';
 import 'ch/modifier.dart';

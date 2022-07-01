@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'loglevel.dart';
+import 'log_level.dart';
 
 class Log {
 

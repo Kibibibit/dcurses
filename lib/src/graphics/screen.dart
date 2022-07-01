@@ -1,5 +1,5 @@
 import 'dart:io';
-import '../utils/emptybuffer.dart';
+import '../utils/empty_buffer.dart';
 import 'ch/ch.dart';
 import 'ch/modifier.dart';
 import 'window.dart';
@@ -16,8 +16,6 @@ class Screen {
 
   int get lines => _lines;
   int get columns => _columns;
-
-  int? _focusedWindow;
 
   Screen() {
     _lines = stdout.terminalLines;
@@ -85,7 +83,7 @@ class Screen {
 
     for (int y = 0; y < _lines; y++) {
       for (int x = 0; x < _columns; x++) {
-        if (_lastBuffer[y][x] != _buffer[y][x]) {
+        if (_lastBuffer[y][x] != _buffer[y][x] && _buffer[y][x].value != Ch.transparent) {
           stdout.write('\x1b[${y + 1};${x + 1}H');
           for (Modifier mod in _buffer[y][x].modifiers) {
             stdout.write(mod.escapeCode);
