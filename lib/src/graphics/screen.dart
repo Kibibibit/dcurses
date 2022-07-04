@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:dcurses/src/graphics/keys.dart';
+
 import '../utils/empty_buffer.dart';
 import 'ch/ch.dart';
 import 'ch/modifier.dart';
@@ -25,6 +27,7 @@ class Screen {
     _lastBuffer = emptyBuffer(_lines, _columns);
     stdin.echoMode = false;
     stdin.lineMode = false;
+
     hideCursor();
   }
 
@@ -58,8 +61,31 @@ class Screen {
     stdout.write('\x1b[H\x1b[2J\x1b[0m');
   }
 
-  String getch() => String.fromCharCode(stdin.readByteSync());
-  
+  String getch([int buffers = 1]) {
+    List<int> codes = [];
+    while (buffers > 0) {
+      int byte = stdin.readByteSync();
+      // If the first byte is 27, we will be getting a few more bytes
+      if (byte == Key.multibyteHeader) {
+        buffers = 3;
+      }
+      // If the key is page up/down or delete, we're going to get a final trailing 126 which we can't use
+      if (Key.fourByteKeys.contains(byte)) {
+        stdin.readByteSync();
+      }
+      buffers--;
+      codes.add(byte);
+    }
+    if (codes.length > 1) {
+      String out = Key.getKey(codes);
+      if (out == Key.unknown) {
+        return getch();
+      }
+      return out;
+    } else {
+      return String.fromCharCodes(codes);
+    }
+  }
 
   void refresh() {
     List<Window> windows = _sortWindows();
@@ -83,7 +109,8 @@ class Screen {
 
     for (int y = 0; y < _lines; y++) {
       for (int x = 0; x < _columns; x++) {
-        if (_lastBuffer[y][x] != _buffer[y][x] && _buffer[y][x].value != Ch.transparent) {
+        if (_lastBuffer[y][x] != _buffer[y][x] &&
+            _buffer[y][x].value != Ch.transparent) {
           stdout.write('\x1b[${y + 1};${x + 1}H');
           for (Modifier mod in _buffer[y][x].modifiers) {
             stdout.write(mod.escapeCode);

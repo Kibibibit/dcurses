@@ -10,6 +10,8 @@ class Log {
   Log(String name) {
     _name = name;
     _filename = "logs/$_start.log";
+    Directory("logs/").createSync();
+
   }
 
   static String _dateTimeStringLong(DateTime dateTime) {
@@ -26,7 +28,7 @@ class Log {
     return "[${level.name.toUpperCase()}]";
   }
 
-  void info(String message) {
+  void info(String message) async {
     _log(LogLevel.info, message);
   }
 
@@ -46,7 +48,7 @@ class Log {
   void _log(LogLevel level, String message) {
     String line = "[${_dateTimeStringShort(DateTime.now())}][$_name]${_level(level)} $message";
     File file = File(_filename);
-    IOSink sink = file.openWrite();
+    IOSink sink = file.openWrite(mode:FileMode.append);
     sink.writeln(line);
     sink.close();
 
