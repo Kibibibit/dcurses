@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dcurses/src/graphics/keys.dart';
+import 'package:dcurses/src/graphics/key.dart';
 
 import '../utils/empty_buffer.dart';
 import 'ch/ch.dart';
@@ -27,8 +27,9 @@ class Screen {
     _lastBuffer = emptyBuffer(_lines, _columns);
     stdin.echoMode = false;
     stdin.lineMode = false;
-
     hideCursor();
+    clear();
+    refresh();
   }
 
   List<Window> _sortWindows() {
