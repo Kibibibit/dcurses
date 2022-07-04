@@ -1,0 +1,5 @@
+
+enum EditorMode {
+  unfocused,
+  focused
+}
