@@ -1,22 +1,31 @@
-
-
-import 'dart:io';
-
 import 'package:dcurses/dcurses.dart';
 
-void main() async {
-
-
+void main() {
   Screen screen = Screen();
 
-  screen.clear();
+  Window testWindow = Window("test", 5, 5, 10, 5)..border=Border.double();
+
+  screen.addWindow(testWindow);
   screen.refresh();
 
-  for (int i = 0; i < 4; i++) {
-    String value = screen.getch();
-    stdout.writeln(value);
+  while (true) {
+    testWindow.cx = 1;
+    testWindow.cy = 1;
+    String key = screen.getch();
+    if (key == Key.leftArrow) {
+      testWindow.x--;
+    } else if (key == Key.rightArrow) {
+      testWindow.x++;
+    } else if (key == Key.upArrow) {
+      testWindow.y--;
+    } else if (key == Key.downArrow) {
+      testWindow.y++;
+    }
+    testWindow.addStr("${key.codeUnits}");
+    screen.refresh();
   }
+
+
+
   
-
-
 }
