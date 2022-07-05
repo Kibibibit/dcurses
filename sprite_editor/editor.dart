@@ -1,6 +1,7 @@
 import 'package:dcurses/dcurses.dart';
 
 import 'editor_mode.dart';
+import 'tool.dart';
 import 'windows/editor_window.dart';
 import 'windows/main_window.dart';
 import 'windows/palette_window.dart';
@@ -20,11 +21,13 @@ class Editor {
   late Window _paletteWindow;
   late Window _topBar;
 
+  static Tool tool = Tool.pencil;
+
   bool running = false;
 
   String? focusedWindow = "mainwindow";
 
-  Map<Key, String> _hotkeys = {};
+  final Map<Key, String> _hotkeys = {};
 
   EditorMode editorMode = EditorMode.focused;
 
@@ -79,6 +82,8 @@ class Editor {
         Window? w = _screen.get(_hotkeys[key] ?? "");
         if (w != null && w is EditorWindow) {
           (w).onHotkey(key);
+          w.drawWindow();
+          _screen.refresh();
           continue;
         }
       }
@@ -146,10 +151,19 @@ class Editor {
   }
 
   void _focused(Key key) {
-    if (key == Key.backspace || key == Key.delete) {
+    if (key == Key.esc) {
       editorMode = EditorMode.unfocused;
       return;
     }
+    if (focusedWindow != null) {
+      Window? w = _screen.get(focusedWindow!);
+      if (w != null && w is EditorWindow) {
+        w.onKey(key);
+        w.drawWindow();
+        _screen.refresh();
+      }
+    }
+    
   }
 
   void _cleanup() {

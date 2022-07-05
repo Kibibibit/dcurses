@@ -15,4 +15,11 @@ class MainWindow extends EditorWindow {
   void onHotkey(Key hotkey) {
   }
   
+  @override
+  void onKey(Key key) {
+  }
+
+  @override
+  void drawWindow() {}
+  
 }
