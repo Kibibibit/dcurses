@@ -1,13 +1,14 @@
-import 'package:dcurses/dcurses.dart';
+
+
 
 import 'editor.dart';
 
-void main() {
+Future main() async{
 
   Editor editor = Editor();
 
-  editor.run();
+  await editor.run();
 
+  editor.close();
 
- 
 }

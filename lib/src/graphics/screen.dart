@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dcurses/src/graphics/key.dart';
 
@@ -19,6 +20,11 @@ class Screen {
   int get lines => _lines;
   int get columns => _columns;
 
+
+  late StreamSubscription _streamSubscription;
+
+  late Completer _completer;
+
   Screen() {
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
@@ -27,9 +33,15 @@ class Screen {
     _lastBuffer = emptyBuffer(_lines, _columns);
     stdin.echoMode = false;
     stdin.lineMode = false;
+    _completer = Completer();
     hideCursor();
     clear();
     refresh();
+
+  }
+
+  Future<void> run() async {
+    _streamSubscription = stdin.listen((event) =>_onKey(event));
   }
 
   List<Window> _sortWindows() {
@@ -44,8 +56,12 @@ class Screen {
     return _windows[label];
   }
 
+  Set<String> get windows => _windows.keys.toSet();
+
   void addWindow(Window window) {
+    window.screen = this;
     _windows[window.label] = window;
+
   }
 
   void showCursor() {
@@ -62,31 +78,7 @@ class Screen {
     stdout.write('\x1b[H\x1b[2J\x1b[0m');
   }
 
-  String getch([int buffers = 1]) {
-    List<int> codes = [];
-    while (buffers > 0) {
-      int byte = stdin.readByteSync();
-      // If the first byte is 27, we will be getting a few more bytes
-      if (byte == Key.multibyteHeader) {
-        buffers = 3;
-      }
-      // If the key is page up/down or delete, we're going to get a final trailing 126 which we can't use
-      if (Key.fourByteKeys.contains(byte)) {
-        stdin.readByteSync();
-      }
-      buffers--;
-      codes.add(byte);
-    }
-    if (codes.length > 1) {
-      String out = Key.getKey(codes);
-      if (out == Key.unknown) {
-        return getch();
-      }
-      return out;
-    } else {
-      return String.fromCharCodes(codes);
-    }
-  }
+
 
   void refresh() {
     List<Window> windows = _sortWindows();
@@ -122,5 +114,18 @@ class Screen {
         _lastBuffer[y][x] = _buffer[y][x];
       }
     }
+  }
+
+  void _onKey(List<int> codes) {
+    _completer.complete(Key.fromCodes(codes));
+    _completer = Completer();
+  }
+
+  Future<Key> getch() async {    
+    return await _completer.future.then((value) => value);
+  }
+
+  void close() {
+    _streamSubscription.cancel();
   }
 }

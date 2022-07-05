@@ -25,6 +25,11 @@ class Modifier {
     return Modifier("\x1b[${_fg(fg)};${_bg(bg)}m");
   }
 
+  @override
+  String toString() {
+    return escapeCode;
+  }
+
   
 
   static int _fg(Colour colour) {

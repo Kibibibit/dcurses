@@ -18,3 +18,5 @@ export 'src/graphics/key.dart' show Key;
 
 export 'src/graphics/ch/ch.dart' show Ch;
 export 'src/graphics/ch/modifier.dart' show Modifier;
+export 'src/graphics/enums/colour.dart' show Colour;
+export 'src/graphics/enums/decoration.dart' show Decoration;

@@ -11,7 +11,7 @@ class Ch {
   Ch(this.value, [this.modifiers = const []]);
 
   @override
-  int get hashCode => "Ch$value".hashCode;
+  int get hashCode => "Ch$value$modifiers".hashCode;
 
   @override
   bool operator== (dynamic other) {

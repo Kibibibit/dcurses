@@ -68,13 +68,12 @@ class Editor {
     _screen.refresh();
   }
 
-  void run() {
+  Future<void> run() async {
+    _screen.run();
     running = true;
     while (running) {
       _focus();
-      String key = _screen.getch();
-
-      
+      Key key = await _screen.getch();
 
       switch (editorMode) {
         case EditorMode.unfocused:
@@ -89,32 +88,27 @@ class Editor {
     _cleanup();
   }
 
-  void _unfocused(String key) {
-    
-    switch (key) {
-      case Key.upArrow:
-        _focusY--;
-        break;
-      case Key.downArrow:
-        _focusY++;
-        break;
-      case Key.leftArrow:
-        if (_focusY == 1) {
-          _focusX--;
-        }
-        break;
-      case Key.rightArrow:
-        if (_focusY == 1) {
-          _focusX++;
-        }
-        break;
-      case Key.home:
-        _focusX = 1;
-        _focusY = 1;
-        break;
-      case Key.enter:
-        editorMode = EditorMode.focused;
-        return;
+  void _unfocused(Key key) {
+    if (key == Key.upArrow) {
+      _focusY--;
+    } else if (key == Key.downArrow) {
+      _focusY++;
+    } else if (key == Key.leftArrow) {
+      if (_focusY == 1) {
+        _focusX--;
+      }
+    } else if (key == Key.rightArrow) {
+      if (_focusY == 1) {
+        _focusX++;
+      }
+    } else if (key == Key.home) {
+      _focusX = 1;
+      _focusY = 1;
+    } else if (key == Key.enter) {
+      editorMode = EditorMode.focused;
+      return;
+    } else {
+      return;
     }
 
     if (_focusY < 0) {
@@ -143,8 +137,8 @@ class Editor {
     }
   }
 
-  void _focused(String key) {
-    if (key == Key.backspace) {
+  void _focused(Key key) {
+    if (key == Key.backspace || key == Key.delete) {
       editorMode = EditorMode.unfocused;
       return;
     }
@@ -160,9 +154,16 @@ class Editor {
         _screen.get(window)!.border =
             Border.double([Modifier.fg(Colour.white)]);
       } else {
-        _screen.get(window)!.border = Border.thin([Modifier.fg(editorMode == EditorMode.unfocused ? Colour.gray : Colour.white)]);
+        _screen.get(window)!.border = Border.thin([
+          Modifier.fg(
+              editorMode == EditorMode.unfocused ? Colour.gray : Colour.white)
+        ]);
       }
     }
     _screen.refresh();
+  }
+
+  void close() {
+    _screen.close();
   }
 }
