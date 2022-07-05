@@ -24,7 +24,7 @@ class Editor {
 
   String? focusedWindow = "mainwindow";
 
-  Map<String, String> _hotkeys = {};
+  Map<Key, String> _hotkeys = {};
 
   EditorMode editorMode = EditorMode.focused;
 
@@ -58,9 +58,9 @@ class Editor {
 
     for (String w in _screen.windows) {
       if (_screen.get(w) is EditorWindow) {
-        Set<String> keys = ((_screen.get(w) as EditorWindow).getHotkeys());
-        for (String key in keys) {
-          _hotkeys[w] = key;
+        Set<Key> keys = ((_screen.get(w) as EditorWindow).getHotkeys());
+        for (Key key in keys) {
+          _hotkeys[key] = w;
         }
       }
     }
@@ -74,6 +74,14 @@ class Editor {
     while (running) {
       _focus();
       Key key = await _screen.getch();
+
+      if (_hotkeys.containsKey(key)) {
+        Window? w = _screen.get(_hotkeys[key] ?? "");
+        if (w != null && w is EditorWindow) {
+          (w).onHotkey(key);
+          continue;
+        }
+      }
 
       switch (editorMode) {
         case EditorMode.unfocused:

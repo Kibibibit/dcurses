@@ -11,7 +11,7 @@ class ToolWindow extends EditorWindow {
     _drawTools();
   }
 
-  final Map<Tool, String> _hotkeys = {Tool.pencil: "D", Tool.eraser: "E"};
+  final Map<Tool, Key> _hotkeys = {Tool.pencil: Key.fromChar("D"), Tool.eraser: Key.fromChar("E")};
 
   final Map<Tool, int> _icons = {Tool.pencil: 0x270E, Tool.eraser: 0x232B};
 
@@ -24,18 +24,18 @@ class ToolWindow extends EditorWindow {
       addStr(" ${String.fromCharCode(_icons[t] ?? 10)} ",[mod]);
       cx = center - 1;
       cy++;
-      addStr("(${_hotkeys[t] ?? "_"})",[mod]);
+      addStr("(${_hotkeys[t]?.string ?? "_"})",[mod]);
       cy += 2;
     }
   }
   
   @override
-  Set<String> getHotkeys() {
-    return {"D", "E"};
+  Set<Key> getHotkeys() {
+    return {Key.fromChar("D"), Key.fromChar("E")};
   }
   
   @override
-  void onHotkey(String hotkey) {
+  void onHotkey(Key hotkey) {
     for (Tool t in _hotkeys.keys) {
       if (_hotkeys[t] == hotkey) {
         tool = t;

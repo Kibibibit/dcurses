@@ -7,12 +7,12 @@ class TopBar extends EditorWindow {
   TopBar(String label, int y, int x, int columns, int lines) : super(label, y, x, columns, lines);
   
   @override
-  Set<String> getHotkeys() {
+  Set<Key> getHotkeys() {
     return {};
   }
   
   @override
-  void onHotkey(String hotkey) {
+  void onHotkey(Key hotkey) {
   }
   
 }
