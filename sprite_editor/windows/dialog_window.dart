@@ -31,4 +31,12 @@ class DialogWindow extends EditorWindow {
   void onKey(Key key) {
   }
   
+  @override
+  void onFocusGain() {
+  }
+  
+  @override
+  void onFocusLoss() {
+  }
+  
 }

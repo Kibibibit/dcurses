@@ -15,5 +15,7 @@ abstract class EditorWindow extends Window {
   void onHotkey(Key hotkey);
   void onKey(Key key);
   void drawWindow();
+  void onFocusGain();
+  void onFocusLoss();
 
 }

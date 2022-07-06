@@ -62,4 +62,12 @@ class ToolWindow extends EditorWindow {
 
     Editor.tool = Tool.values[tIndex];
   }
+  
+  @override
+  void onFocusGain() {
+  }
+  
+  @override
+  void onFocusLoss() {
+  }
 }

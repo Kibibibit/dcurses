@@ -20,4 +20,12 @@ class PaletteWindow extends EditorWindow {
    @override
   void drawWindow() {}
   
+  @override
+  void onFocusGain() {
+  }
+  
+  @override
+  void onFocusLoss() {
+  }
+  
 }

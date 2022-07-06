@@ -22,6 +22,8 @@ class Editor {
   late Window _topBar;
 
   static Tool tool = Tool.pencil;
+  static int spriteHeight = 10;
+  static int spriteWidth = 20;
 
   bool running = false;
 
@@ -65,6 +67,7 @@ class Editor {
         for (Key key in keys) {
           _hotkeys[key] = w;
         }
+        (_screen.get(w) as EditorWindow).drawWindow();
       }
     }
 
@@ -77,6 +80,14 @@ class Editor {
     while (running) {
       _focus();
       Key key = await _screen.getch();
+
+      if (key == Key.home && focusedWindow != _mainWindow.label) {
+        editorMode = EditorMode.focused;
+        focusedWindow = _mainWindow.label;
+        _focusX = 1;
+        _focusY = 1;
+        continue;
+      }
 
       if (_hotkeys.containsKey(key)) {
         Window? w = _screen.get(_hotkeys[key] ?? "");
@@ -114,9 +125,6 @@ class Editor {
       if (_focusY == 1) {
         _focusX++;
       }
-    } else if (key == Key.home) {
-      _focusX = 1;
-      _focusY = 1;
     } else if (key == Key.enter) {
       editorMode = EditorMode.focused;
       return;
@@ -163,7 +171,6 @@ class Editor {
         _screen.refresh();
       }
     }
-    
   }
 
   void _cleanup() {
