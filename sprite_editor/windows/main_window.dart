@@ -5,8 +5,8 @@ import '../utils/wrap.dart';
 import 'editor_window.dart';
 
 class MainWindow extends EditorWindow {
-  MainWindow(String label, int y, int x, int columns, int lines)
-      : super(label, y, x, columns, lines);
+  MainWindow(Editor editor, String label, int y, int x, int columns, int lines)
+      : super(editor, label, y, x, columns, lines);
 
   final List<Ch> _backgrounds = [
     Ch(0x259a, [Modifier.colour(fg: Colour.gray, bg: Colour.lightgray)]),
@@ -18,18 +18,15 @@ class MainWindow extends EditorWindow {
 
   @override
   Set<Key> getHotkeys() {
-    return {
-      Key.fromChar("["),
-      Key.fromChar("]")
-    };
+    return {Key.fromChar("["), Key.fromChar("]")};
   }
 
   @override
   void onHotkey(Key hotkey) {
     if (hotkey == Key.fromChar("[")) {
-      _background = wrap(_background-1, _backgrounds.length);
+      _background = wrap(_background - 1, _backgrounds.length);
     } else if (hotkey == Key.fromChar("]")) {
-      _background = wrap(_background+1, _backgrounds.length);
+      _background = wrap(_background + 1, _backgrounds.length);
     }
   }
 
@@ -38,10 +35,8 @@ class MainWindow extends EditorWindow {
 
   @override
   void drawWindow() {
-    
-    _drawBackground();
+    _drawSprite();
     _drawBackgroundSelect();
-    
   }
 
   void _drawBackgroundSelect() {
@@ -66,26 +61,35 @@ class MainWindow extends EditorWindow {
     }
   }
 
-  void _drawBackground() {
-    int _sx = 4;
-    int _sy = 4;
+  void _drawSprite() {
+    if (editor.editingSprite != null) {
+      int _sx = 4;
+      int _sy = 4;
 
-    for (int sx = _sx; sx < Editor.spriteWidth + _sx; sx++) {
-      for (int sy = _sy; sy < Editor.spriteHeight + _sy; sy++) {
-
-        cx = sx;
-        cy = sy;
-
-        add(_backgrounds[_background]);
+      for (int sx = _sx; sx < editor.editingSprite!.columns + _sx; sx++) {
+        for (int sy = _sy; sy < editor.editingSprite!.lines + _sy; sy++) {
+          cx = sx;
+          cy = sy;
+          if (editor.editingSprite!.data[sy][sx].value == Ch.transparent) {
+            add(_backgrounds[_background]);
+          } else {
+            add(editor.editingSprite!.data[sy][sx]);
+          }
+          
+        }
       }
+    } else {
+      cx = centerX;
+      cy = centerY;
+      String message = "No sprite loaded!";
+      cx -= (message.length / 2).floor();
+      addStr(message);
     }
   }
-  
+
   @override
-  void onFocusGain() {
-  }
-  
+  void onFocusGain() {}
+
   @override
-  void onFocusLoss() {
-  }
+  void onFocusLoss() {}
 }

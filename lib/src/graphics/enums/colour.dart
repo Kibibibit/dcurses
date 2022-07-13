@@ -1,4 +1,6 @@
 
+/// The colours that can be set using escape codes with 
+/// the [Modifier] object
 enum Colour {
   black,
   red,

@@ -1,6 +1,7 @@
 
 import 'package:dcurses/dcurses.dart';
 
+import '../editor.dart';
 import 'editor_window.dart';
 
 class DialogWindow extends EditorWindow {
@@ -9,7 +10,7 @@ class DialogWindow extends EditorWindow {
   Map<String, String Function()> options;
   
 
-  DialogWindow(this.message, this.options, String label, int y, int x, int columns, int lines) : super(label, y, x, columns, lines) {
+  DialogWindow(this.message, this.options, Editor editor, String label, int y, int x, int columns, int lines) : super(editor, label, y, x, columns, lines) {
     z = 99999;
     border = Border.rounded();
   }

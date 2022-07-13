@@ -1,5 +1,6 @@
 import 'package:dcurses/dcurses.dart';
 
+import 'editing_sprite.dart';
 import 'editor_mode.dart';
 import 'tool.dart';
 import 'windows/editor_window.dart';
@@ -21,11 +22,10 @@ class Editor {
   late Window _paletteWindow;
   late Window _topBar;
 
-  static Tool tool = Tool.pencil;
-  static int spriteHeight = 10;
-  static int spriteWidth = 20;
+  Tool tool = Tool.pencil;
 
   bool running = false;
+  bool _exploring = false;
 
   String? focusedWindow = "mainwindow";
 
@@ -33,16 +33,19 @@ class Editor {
 
   EditorMode editorMode = EditorMode.focused;
 
+  EditingSprite? editingSprite;
+
   Editor() {
     _focusX = 1;
     _focusY = 1;
     _screen = Screen();
-    _topBar = TopBar("topbar", 0, 0, _screen.columns, _topBarHeight)
+    _topBar = TopBar(this, "topbar", 0, 0, _screen.columns, _topBarHeight)
       ..border = Border.thin();
-    _toolWindow = ToolWindow("toolwindow", _topBarHeight, 0, _toolWindowWidth,
-        _screen.lines - _topBarHeight)
+    _toolWindow = ToolWindow(this, "toolwindow", _topBarHeight, 0,
+        _toolWindowWidth, _screen.lines - _topBarHeight)
       ..border = Border.rounded();
     _mainWindow = MainWindow(
+        this,
         "mainwindow",
         _topBarHeight,
         _toolWindowWidth,
@@ -50,6 +53,7 @@ class Editor {
         _screen.lines - _topBarHeight)
       ..border = Border.double();
     _paletteWindow = PaletteWindow(
+        this,
         "palettewindow",
         _topBarHeight,
         _mainWindow.x + _mainWindow.columns,
@@ -78,6 +82,10 @@ class Editor {
     _screen.run();
     running = true;
     while (running) {
+      if (_exploring) {
+        
+        return;
+      }
       _focus();
       Key key = await _screen.getch();
 

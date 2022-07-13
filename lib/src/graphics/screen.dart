@@ -21,9 +21,17 @@ class Screen {
   int get columns => _columns;
 
 
+  bool _usingListener = false;
+
+  bool _running = false;
+
+  bool get usingListener => _usingListener;
+
   late StreamSubscription _streamSubscription;
 
   late Completer _completer;
+
+  StreamController<Key>? _streamController;
 
   Screen() {
     _lines = stdout.terminalLines;
@@ -37,11 +45,31 @@ class Screen {
     hideCursor();
     clear();
     refresh();
+  }
+
+  void disableBlocking() {
+    if (_running) {
+      throw Exception("The screen is already running and cannot disable blocking calls now");
+    }
+    if (_usingListener) {
+      print("Alreading using listener!");
+      return;
+    }
+    _streamController = StreamController.broadcast();
+    _usingListener = true;
+  }
+
+  StreamSubscription<Key> listen(void Function(Key) onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+    if (!_usingListener) {
+      throw Exception("The screen is in blocking mode so listeners cannot be used");
+    }
+    return _streamController!.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
 
   }
 
   Future<void> run() async {
-    _streamSubscription = stdin.listen((event) =>_onKey(event));
+    _running = true;
+    _streamSubscription = stdin.listen((event) => usingListener ? _onKeyListen(Key.fromCodes(event)) : _onKeyBlocking(event));
   }
 
   List<Window> _sortWindows() {
@@ -102,8 +130,7 @@ class Screen {
 
     for (int y = 0; y < _lines; y++) {
       for (int x = 0; x < _columns; x++) {
-        if (_lastBuffer[y][x] != _buffer[y][x] &&
-            _buffer[y][x].value != Ch.transparent) {
+        if (_lastBuffer[y][x] != _buffer[y][x]) {
           stdout.write('\x1b[${y + 1};${x + 1}H');
           for (Modifier mod in _buffer[y][x].modifiers) {
             stdout.write(mod.escapeCode);
@@ -116,16 +143,29 @@ class Screen {
     }
   }
 
-  void _onKey(List<int> codes) {
+  void _onKeyBlocking(List<int> codes) {
     _completer.complete(Key.fromCodes(codes));
     _completer = Completer();
   }
 
-  Future<Key> getch() async {    
+  void _onKeyListen(Key key) {
+    _streamController!.sink.add(key);
+  }
+
+  Future<Key> getch() async {
+    if (!_running) {
+      throw Exception("Screen isn't running yet!!");
+    }
+    if (usingListener) {
+      throw Exception("Getch is not avaiable when using non-blocking listeners");
+    }  
     return await _completer.future.then((value) => value);
   }
 
   void close() {
+    if (_usingListener) {
+      _streamController!.close();
+    }
     _streamSubscription.cancel();
   }
 }

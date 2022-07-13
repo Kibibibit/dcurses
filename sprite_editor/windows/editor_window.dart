@@ -1,9 +1,13 @@
 
 import 'package:dcurses/dcurses.dart';
 
+import '../editor.dart';
+
 abstract class EditorWindow extends Window {
 
-  EditorWindow(String label, int y, int x, int columns, int lines) : super(label, y, x, columns, lines) {
+  final Editor editor;
+
+  EditorWindow(this.editor, String label, int y, int x, int columns, int lines) : super(label, y, x, columns, lines) {
     drawWindow();
   }
 

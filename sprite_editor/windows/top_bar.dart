@@ -1,24 +1,34 @@
 import 'package:dcurses/dcurses.dart';
 
+import '../editor.dart';
 import 'editor_window.dart';
 
 class TopBar extends EditorWindow {
-  TopBar(String label, int y, int x, int columns, int lines)
-      : super(label, y, x, columns, lines);
+  TopBar(Editor editor, String label, int y, int x, int columns, int lines)
+      : super(editor, label, y, x, columns, lines);
+
 
   @override
   Set<Key> getHotkeys() {
-    return {};
+    return {Key.f1, Key.f2};
   }
 
   @override
-  void onHotkey(Key hotkey) {}
+  void onHotkey(Key hotkey) {
+    if (hotkey == Key.f1) {
+      _saveSprite();
+    } else if (hotkey == Key.f2) {
+      _loadSprite();
+    }
+  }
 
   @override
   void onKey(Key key) {}
 
   @override
-  void drawWindow() {}
+  void drawWindow() {
+
+  }
   
   @override
   void onFocusGain() {
@@ -26,5 +36,14 @@ class TopBar extends EditorWindow {
   
   @override
   void onFocusLoss() {
+  }
+
+
+  void _saveSprite() {
+
+  }
+
+  void _loadSprite() {
+    
   }
 }

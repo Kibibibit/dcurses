@@ -1,9 +1,10 @@
 import 'package:dcurses/dcurses.dart';
 
+import '../editor.dart';
 import 'editor_window.dart';
 
 class PaletteWindow extends EditorWindow {
-  PaletteWindow(String label, int y, int x, int columns, int lines) : super(label, y, x, columns, lines);
+  PaletteWindow(Editor editor, String label, int y, int x, int columns, int lines) : super(editor, label, y, x, columns, lines);
   
   @override
   Set<Key> getHotkeys() {

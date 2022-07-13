@@ -1,9 +1,6 @@
-
-
 import '../../dcurses.dart';
 
 class Window {
-
   static int _lastZ = 0;
 
   late int _lines, _columns;
@@ -21,44 +18,55 @@ class Window {
 
   Border? border;
 
+  bool borderFirst = false;
+
   Window(this.label, this.y, this.x, int columns, int lines) {
     _lines = lines;
     _columns = columns;
     _buffer = emptyBuffer(lines, columns);
     _lastBuffer = emptyBuffer(lines, columns);
-    
   }
 
   int get lines => _lines;
   int get columns => _columns;
 
-
   List<List<Ch>> get buffer => _genBuffer(_buffer);
   List<List<Ch>> get lastBuffer => _genBuffer(_lastBuffer);
-
-  
 
   bool onScreen(int y, int x) =>
       (x < columns) && (x >= 0) && y < lines && y >= 0;
 
   List<List<Ch>> _genBuffer(List<List<Ch>> b) {
-    List<List<Ch>> out = cloneList(b);
 
+    List<List<Ch>>? out;
+
+    if (borderFirst) {
+      out = _addBorder(b);
+    }
+    out = cloneList(out ?? b);
+    if (!borderFirst) {
+      out = _addBorder(out);
+    }
+    
+    return out;
+  }
+
+  List<List<Ch>> _addBorder(List<List<Ch>> b) {
+    List<List<Ch>> out = cloneList(b);
     if (border != null) {
       for (int x = 0; x < _columns; x++) {
-        _buffer[0][x] = border!.th;
-        _buffer[_lines-1][x] = border!.bh;
+        out[0][x] = border!.th;
+        out[_lines - 1][x] = border!.bh;
       }
       for (int y = 0; y < _lines; y++) {
-        _buffer[y][0] = border!.lv;
-        _buffer[y][_columns-1] = border!.rv;
+        out[y][0] = border!.lv;
+        out[y][_columns - 1] = border!.rv;
       }
-      _buffer[0][0] = border!.tl;
-      _buffer[0][_columns -1] = border!.tr;
-      _buffer[_lines-1][0] = border!.bl;
-      _buffer[_lines-1][_columns-1] = border!.br;
+      out[0][0] = border!.tl;
+      out[0][_columns - 1] = border!.tr;
+      out[_lines - 1][0] = border!.bl;
+      out[_lines - 1][_columns - 1] = border!.br;
     }
-
     return out;
   }
 
@@ -81,6 +89,18 @@ class Window {
     }
   }
 
+  void add(Ch ch) {
+    if (onScreen(cy, cx)) {
+      _buffer[cy][cx] = ch;
+    }
+  }
+
+  void remove() {
+    if (onScreen(cy, cx)) {
+      _buffer[cy][cx] = Ch(_buffer[cy][cx].value, [Modifier.decoration(Decoration.hidden)]);
+    }
+  }
+
   void addSprite(Sprite sprite) {
     int x = cx;
     for (List<Ch> line in sprite.data) {
@@ -90,7 +110,7 @@ class Window {
           cx++;
         }
       }
-      cx=x;
+      cx = x;
       cy++;
       if (!onScreen(cy, cx)) {
         cy--;
@@ -106,5 +126,4 @@ class Window {
       }
     }
   }
-  
 }
