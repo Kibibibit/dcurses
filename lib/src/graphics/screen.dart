@@ -99,6 +99,12 @@ class Screen {
 
   }
 
+  void removeWindow(String label) {
+    if (_windows.containsKey(label)) {
+      _windows.remove(label);
+    }
+  }
+
   void showCursor() {
     stdout.write('\x1b[?25h');
   }
