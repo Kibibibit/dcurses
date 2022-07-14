@@ -28,6 +28,7 @@ class Screen {
   bool get usingListener => _usingListener;
 
   late StreamSubscription _streamSubscription;
+  late StreamSubscription _sigintSub;
 
   late Completer _completer;
 
@@ -42,7 +43,7 @@ class Screen {
     stdin.echoMode = false;
     stdin.lineMode = false;
     _completer = Completer();
-    hideCursor();
+    
     clear();
     refresh();
   }
@@ -68,8 +69,14 @@ class Screen {
   }
 
   Future<void> run() async {
+    hideCursor();
     _running = true;
     _streamSubscription = stdin.listen((event) => usingListener ? _onKeyListen(Key.fromCodes(event)) : _onKeyBlocking(event));
+    _sigintSub = ProcessSignal.sigint.watch().listen((event) {
+      clear();
+      close();
+      exit(0);
+    });
   }
 
   List<Window> _sortWindows() {
@@ -166,6 +173,8 @@ class Screen {
     if (_usingListener) {
       _streamController!.close();
     }
+    _sigintSub.cancel();
     _streamSubscription.cancel();
+    showCursor();
   }
 }
