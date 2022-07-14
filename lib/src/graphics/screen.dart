@@ -73,7 +73,7 @@ class Screen {
     _running = true;
     _streamSubscription = stdin.listen((event) => usingListener ? _onKeyListen(Key.fromCodes(event)) : _onKeyBlocking(event));
     _sigintSub = ProcessSignal.sigint.watch().listen((event) {
-      clear();
+      
       close();
       exit(0);
     });
@@ -175,6 +175,7 @@ class Screen {
     }
     _sigintSub.cancel();
     _streamSubscription.cancel();
+    clear();
     showCursor();
   }
 }
