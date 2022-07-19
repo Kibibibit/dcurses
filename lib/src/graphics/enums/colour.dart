@@ -2,6 +2,12 @@
 /// the [Modifier] object
 class Colour {
 
+  static final int _noColourFg = 38;
+  static final int _noColourBg = 48;
+
+  static final int _maxRGB = 5;
+  static final int _maxGray = 23;
+
   final int code;
   final int r;
   final int g;
@@ -15,14 +21,14 @@ class Colour {
   }
 
   static Colour expanded(int r, int g, int b) {
-    int code = 38;
-    if (r < 0 || r > 5) {
+    int code = _noColourFg;
+    if (r < 0 || r > _maxRGB) {
       throw Exception("r must be in range 0-5, not $r");
     }
-    if (g < 0 || g > 5) {
+    if (g < 0 || g > _maxRGB) {
       throw Exception("g must be in range 0-5, not $g");
     }
-    if (b < 0 || b > 5) {
+    if (b < 0 || b > _maxRGB) {
       throw Exception("b must be in range 0-5, not $b");
     }
 
@@ -31,17 +37,17 @@ class Colour {
 
   static Colour grayscale(int v) {
 
-    if (v > 23) {
+    if (v > _maxGray) {
       throw Exception("gray must be in range 0-23, not $v");
     }
 
-    return Colour._(38, 5, 5, 5, v+1);
+    return Colour._(_noColourFg, _maxRGB, _maxRGB, _maxRGB, v+1);
   }
 
   String toAnsi({bool fg = true}) {
     int out = fg ? code : code + 10;
     String outString = "$out";
-    if (code >= 38) {
+    if (code == _noColourFg || code == _noColourBg) {
       int _r = r;
       int _g = g;
       int _b = b;
