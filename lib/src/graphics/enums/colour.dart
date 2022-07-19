@@ -46,7 +46,7 @@ class Colour {
       int _g = g;
       int _b = b;
       int rgb = 16 + (36*_r) + (6*_g) + _b + gray;
-      outString = "$out;$rgb";
+      outString = "$out;5;$rgb";
     }
     return outString;
   }
