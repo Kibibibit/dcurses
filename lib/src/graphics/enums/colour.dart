@@ -2,20 +2,21 @@
 /// The colours that can be set using escape codes with 
 /// the [Modifier] object
 enum Colour {
-  black,
-  darkred,
   red,
+  darkred,
   orange,
   yellow,
-  darkgreen,
   green,
+  darkgreen,
   cyan,
   darkcyan,
   blue,
   darkblue,
   magenta,
   purple,
+  white,
   lightgray,
   gray,
-  white
+  black
+  
 }
