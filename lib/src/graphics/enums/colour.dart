@@ -7,7 +7,7 @@ enum Colour {
   red,
   orange,
   yellow,
-  lightgreen,
+  darkgreen,
   green,
   cyan,
   darkcyan,

@@ -56,7 +56,7 @@ class Modifier {
       case Colour.lightgray: return 37;
       case Colour.gray: return 90;
       case Colour.darkred: return 91;
-      case Colour.lightgreen: return 92;
+      case Colour.darkgreen: return 92;
       case Colour.yellow: return 93;
       case Colour.darkblue: return 94;
       case Colour.purple: return 95;
@@ -77,7 +77,7 @@ class Modifier {
       case Colour.lightgray: return 47;
       case Colour.gray: return 100;
       case Colour.darkred: return 101;
-      case Colour.lightgreen: return 102;
+      case Colour.darkgreen: return 102;
       case Colour.yellow: return 103;
       case Colour.darkblue: return 104;
       case Colour.purple: return 105;
