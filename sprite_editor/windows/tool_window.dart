@@ -18,7 +18,7 @@ class ToolWindow extends EditorWindow {
     cy = 1;
     for (Tool t in Tool.values) {
       cx = centerX - 1;
-      Modifier mod = t == editor.tool ? Modifier.colour(fg:Colour.black, bg:Colour.white) : Modifier.colour();
+      Modifier mod = t == editor.tool ? Modifier.colour(fg:Colour.black, bg:Colour.brightwhite) : Modifier.colour();
       addStr(" ${String.fromCharCode(_icons[t] ?? 10)} ",[mod]);
       cx = centerX - 1;
       cy++;

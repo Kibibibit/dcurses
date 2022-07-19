@@ -9,8 +9,8 @@ class MainWindow extends EditorWindow {
       : super(editor, label, y, x, columns, lines);
 
   final List<Ch> _backgrounds = [
-    Ch(0x259a, [Modifier.colour(fg: Colour.gray, bg: Colour.lightgray)]),
-    Ch(0x259a, [Modifier.colour(fg: Colour.gray)]),
+    Ch(0x259a, [Modifier.colour(fg: Colour.brightblack, bg: Colour.white)]),
+    Ch(0x259a, [Modifier.colour(fg: Colour.brightblack)]),
     Ch(0x00A0, [Modifier.colour(fg: Colour.black, bg: Colour.black)])
   ];
 

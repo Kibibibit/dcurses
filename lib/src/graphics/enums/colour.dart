@@ -3,20 +3,20 @@
 /// the [Modifier] object
 enum Colour {
   red,
-  darkred,
+  brightred,
   orange,
-  yellow,
+  brightorange,
   green,
-  darkgreen,
+  brightgreen,
   cyan,
-  darkcyan,
+  brightcyan,
   blue,
-  darkblue,
+  brightblue,
   magenta,
-  purple,
+  brightpurple,
+  brightwhite,
   white,
-  lightgray,
-  gray,
+  brightblack,
   black
   
 }

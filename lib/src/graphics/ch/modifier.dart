@@ -33,7 +33,7 @@ class Modifier {
   }
 
   /// Creates an escape code that can set the foreground and background color of a [Ch]
-  static Modifier colour({Colour fg = Colour.white, Colour bg = Colour.black}) {
+  static Modifier colour({Colour fg = Colour.brightwhite, Colour bg = Colour.black}) {
     return Modifier("\x1b[${_fg(fg)};${_bg(bg)}m");
   }
 
@@ -53,15 +53,15 @@ class Modifier {
       case Colour.blue: return 34;
       case Colour.magenta: return 35;
       case Colour.cyan: return 36;
-      case Colour.lightgray: return 37;
-      case Colour.gray: return 90;
-      case Colour.darkred: return 91;
-      case Colour.darkgreen: return 92;
-      case Colour.yellow: return 93;
-      case Colour.darkblue: return 94;
-      case Colour.purple: return 95;
-      case Colour.darkcyan: return 96;
-      case Colour.white: return 97;
+      case Colour.white: return 37;
+      case Colour.brightblack: return 90;
+      case Colour.brightred: return 91;
+      case Colour.brightgreen: return 92;
+      case Colour.brightorange: return 93;
+      case Colour.brightblue: return 94;
+      case Colour.brightpurple: return 95;
+      case Colour.brightcyan: return 96;
+      case Colour.brightwhite: return 97;
     }
   }
 
@@ -74,15 +74,15 @@ class Modifier {
       case Colour.blue: return 44;
       case Colour.magenta: return 45;
       case Colour.cyan: return 46;
-      case Colour.lightgray: return 47;
-      case Colour.gray: return 100;
-      case Colour.darkred: return 101;
-      case Colour.darkgreen: return 102;
-      case Colour.yellow: return 103;
-      case Colour.darkblue: return 104;
-      case Colour.purple: return 105;
-      case Colour.darkcyan: return 106;
-      case Colour.white: return 107;
+      case Colour.white: return 47;
+      case Colour.brightblack: return 100;
+      case Colour.brightred: return 101;
+      case Colour.brightgreen: return 102;
+      case Colour.brightorange: return 103;
+      case Colour.brightblue: return 104;
+      case Colour.brightpurple: return 105;
+      case Colour.brightcyan: return 106;
+      case Colour.brightwhite: return 107;
     }
   }
 

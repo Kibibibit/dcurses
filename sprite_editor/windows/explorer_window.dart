@@ -54,7 +54,7 @@ class ExplorerWindow extends EditorWindow {
   List<Modifier> _color(FileSystemEntity file, int index) {
     List<Modifier> out = [];
 
-    Colour fg = Colour.white;
+    Colour fg = Colour.brightwhite;
     Colour bg = Colour.black;
 
     if (file is Directory) {

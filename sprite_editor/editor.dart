@@ -189,11 +189,11 @@ class Editor {
     for (String window in _screen.windows) {
       if (window == focusedWindow) {
         _screen.get(window)!.border =
-            Border.double([Modifier.fg(Colour.white)]);
+            Border.double([Modifier.fg(Colour.brightwhite)]);
       } else {
         _screen.get(window)!.border = Border.thin([
           Modifier.fg(
-              editorMode == EditorMode.unfocused ? Colour.gray : Colour.white)
+              editorMode == EditorMode.unfocused ? Colour.brightblack : Colour.brightwhite)
         ]);
       }
     }
