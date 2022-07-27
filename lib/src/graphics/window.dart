@@ -1,9 +1,10 @@
 import '../../dcurses.dart';
 
+
 class Window {
   static int _lastZ = 0;
 
-  late int _lines, _columns;
+  late int lines, columns;
   late int x, y;
 
   late List<List<Ch>> _buffer;
@@ -21,17 +22,18 @@ class Window {
   bool borderFirst = false;
 
   Window(this.label, this.y, this.x, int columns, int lines) {
-    _lines = lines;
-    _columns = columns;
+    lines = lines;
+    columns = columns;
     _buffer = emptyBuffer(lines, columns);
     _lastBuffer = emptyBuffer(lines, columns);
   }
 
-  int get lines => _lines;
-  int get columns => _columns;
 
   List<List<Ch>> get buffer => _genBuffer(_buffer);
   List<List<Ch>> get lastBuffer => _genBuffer(_lastBuffer);
+
+  
+  void resize() {}
 
   bool onScreen(int y, int x) =>
       (x < columns) && (x >= 0) && y < lines && y >= 0;
@@ -54,18 +56,18 @@ class Window {
   List<List<Ch>> _addBorder(List<List<Ch>> b) {
     List<List<Ch>> out = cloneList(b);
     if (border != null) {
-      for (int x = 0; x < _columns; x++) {
+      for (int x = 0; x < columns; x++) {
         out[0][x] = border!.th;
-        out[_lines - 1][x] = border!.bh;
+        out[lines - 1][x] = border!.bh;
       }
-      for (int y = 0; y < _lines; y++) {
+      for (int y = 0; y < lines; y++) {
         out[y][0] = border!.lv;
-        out[y][_columns - 1] = border!.rv;
+        out[y][columns - 1] = border!.rv;
       }
       out[0][0] = border!.tl;
-      out[0][_columns - 1] = border!.tr;
-      out[_lines - 1][0] = border!.bl;
-      out[_lines - 1][_columns - 1] = border!.br;
+      out[0][columns - 1] = border!.tr;
+      out[lines - 1][0] = border!.bl;
+      out[lines - 1][columns - 1] = border!.br;
     }
     return out;
   }
@@ -120,8 +122,8 @@ class Window {
   }
 
   void updateBuffer() {
-    for (int y = 0; y < _lines; y++) {
-      for (int x = 0; x < _columns; x++) {
+    for (int y = 0; y < lines; y++) {
+      for (int x = 0; x < columns; x++) {
         _lastBuffer[y][x] = _buffer[y][x];
       }
     }

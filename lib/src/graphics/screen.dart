@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dcurses/src/graphics/key.dart';
+import 'package:dcurses/src/graphics/stdscr.dart';
 
 import '../utils/empty_buffer.dart';
 import 'ch/ch.dart';
@@ -12,14 +13,13 @@ class Screen {
   final Map<String, Window> _windows = {};
 
   late final Window stdscr;
-  late final int _lines, _columns;
+  late int _lines, _columns;
 
   late List<List<Ch>> _buffer;
   late List<List<Ch>> _lastBuffer;
 
   int get lines => _lines;
   int get columns => _columns;
-
 
   bool _usingListener = false;
 
@@ -29,7 +29,7 @@ class Screen {
 
   late StreamSubscription _streamSubscription;
   late StreamSubscription _sigintSub;
-
+  late StreamSubscription _sigwinchSub;
   late Completer _completer;
 
   StreamController<Key>? _streamController;
@@ -37,20 +37,21 @@ class Screen {
   Screen() {
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
-    stdscr = Window(stdscrLabel, 0, 0, _columns, _lines);
+    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines);
     _buffer = emptyBuffer(_lines, _columns);
     _lastBuffer = emptyBuffer(_lines, _columns);
     stdin.echoMode = false;
     stdin.lineMode = false;
     _completer = Completer();
-    
+
     clear();
     refresh();
   }
 
   void disableBlocking() {
     if (_running) {
-      throw Exception("The screen is already running and cannot disable blocking calls now");
+      throw Exception(
+          "The screen is already running and cannot disable blocking calls now");
     }
     if (_usingListener) {
       print("Alreading using listener!");
@@ -60,23 +61,27 @@ class Screen {
     _usingListener = true;
   }
 
-  StreamSubscription<Key> listen(void Function(Key) onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  StreamSubscription<Key> listen(void Function(Key) onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     if (!_usingListener) {
-      throw Exception("The screen is in blocking mode so listeners cannot be used");
+      throw Exception(
+          "The screen is in blocking mode so listeners cannot be used");
     }
-    return _streamController!.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
-
+    return _streamController!.stream.listen(onData,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   Future<void> run() async {
     hideCursor();
     _running = true;
-    _streamSubscription = stdin.listen((event) => usingListener ? _onKeyListen(Key.fromCodes(event)) : _onKeyBlocking(event));
+    _streamSubscription = stdin.listen((event) => usingListener
+        ? _onKeyListen(Key.fromCodes(event))
+        : _onKeyBlocking(event));
     _sigintSub = ProcessSignal.sigint.watch().listen((event) {
-      
       close();
       exit(0);
     });
+    _sigwinchSub = ProcessSignal.sigwinch.watch().listen(_onSigwinch);
   }
 
   List<Window> _sortWindows() {
@@ -93,10 +98,28 @@ class Screen {
 
   Set<String> get windows => _windows.keys.toSet();
 
+  void _onSigwinch(ProcessSignal signal) {
+    bool resize = false;
+    if (_lines != stdout.terminalLines) {
+      _lines = stdout.terminalLines;
+      resize = true;
+    }
+    if (_columns != stdout.terminalColumns) {
+      _columns = stdout.terminalColumns;
+      resize = true;
+    }
+    if (resize) {
+      stdscr.resize();
+      for (Window window in _windows.values) {
+        window.resize();
+      }
+      refresh();
+    }
+  }
+
   void addWindow(Window window) {
     window.screen = this;
     _windows[window.label] = window;
-
   }
 
   void removeWindow(String label) {
@@ -118,8 +141,6 @@ class Screen {
     _buffer = emptyBuffer(lines, columns);
     stdout.write('\x1b[H\x1b[2J\x1b[0m');
   }
-
-
 
   void refresh() {
     List<Window> windows = _sortWindows();
@@ -170,8 +191,9 @@ class Screen {
       throw Exception("Screen isn't running yet!!");
     }
     if (usingListener) {
-      throw Exception("Getch is not avaiable when using non-blocking listeners");
-    }  
+      throw Exception(
+          "Getch is not avaiable when using non-blocking listeners");
+    }
     return await _completer.future.then((value) => value);
   }
 
