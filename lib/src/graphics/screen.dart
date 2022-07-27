@@ -75,17 +75,17 @@ class Screen {
 
   Future<void> run() async {
     try {
-      await _run();
+      await _run().catchError(_errorOut);
     } on Exception catch (error, stackTrace) {
       _errorOut(error, stackTrace);
     }
   }
 
-  void _errorOut(Exception error, StackTrace stackTrace) {
-    print("Error out!");
+  void _errorOut([Exception? error, StackTrace? stackTrace]) {
+    print("Errored out!");
     close();
-    print(error);
-    print(stackTrace);
+    if (error != null) print(error);
+    if (stackTrace != null) print(stackTrace);
     exit(1);
   }
 
