@@ -38,6 +38,7 @@ class Screen {
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
     stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines);
+    stdscr.screen = this;
     _buffer = emptyBuffer(_lines, _columns);
     _lastBuffer = emptyBuffer(_lines, _columns);
     stdin.echoMode = false;
