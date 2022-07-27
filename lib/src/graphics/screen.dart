@@ -82,6 +82,7 @@ class Screen {
   }
 
   void _errorOut(Exception error, StackTrace stackTrace) {
+    print("Error out!");
     close();
     print(error);
     print(stackTrace);
