@@ -24,6 +24,7 @@ class Screen {
   bool _usingListener = false;
 
   bool _running = false;
+  bool _awaitingGetch = false;
 
   bool get usingListener => _usingListener;
 
@@ -73,29 +74,45 @@ class Screen {
   }
 
   Future<void> run() async {
-
     try {
       await _run();
-    } on Exception catch (error,stackTrace) {
-      close();
-      print(error);
-      print(stackTrace);
-      exit(1);
+    } on Exception catch (error, stackTrace) {
+      _errorOut(error, stackTrace);
     }
+  }
 
+  void _errorOut(Exception error, StackTrace stackTrace) {
+    close();
+    print(error);
+    print(stackTrace);
+    exit(1);
   }
 
   Future<void> _run() async {
     hideCursor();
     _running = true;
-    _streamSubscription = stdin.listen((event) => usingListener
-        ? _onKeyListen(Key.fromCodes(event))
-        : _onKeyBlocking(event));
-    _sigintSub = ProcessSignal.sigint.watch().listen((event) {
+    _streamSubscription = stdin.listen((event) {
+      try {
+        if (usingListener) {
+          _onKeyListen(Key.fromCodes(event));
+        } else {
+          _onKeyBlocking(event);
+        }
+      } on Exception catch (error, stackTrace) {
+        _errorOut(error, stackTrace);
+      }
+    });
+    _sigintSub = ProcessSignal.sigint.watch().listen((_) {
       close();
       exit(0);
     });
-    _sigwinchSub = ProcessSignal.sigwinch.watch().listen(_onSigwinch);
+    _sigwinchSub = ProcessSignal.sigwinch.watch().listen((_) {
+      try {
+        _onSigwinch();
+      } on Exception catch (error, stackTrace) {
+        _errorOut(error, stackTrace);
+      }
+    });
   }
 
   List<Window> _sortWindows() {
@@ -112,7 +129,7 @@ class Screen {
 
   Set<String> get windows => _windows.keys.toSet();
 
-  void _onSigwinch(ProcessSignal signal) {
+  void _onSigwinch() {
     bool resize = false;
     if (_lines != stdout.terminalLines) {
       _lines = stdout.terminalLines;
@@ -125,9 +142,9 @@ class Screen {
     if (resize) {
       clear();
       refresh();
-      stdscr.resize(_lines,_columns);
+      stdscr.resize(_lines, _columns);
       for (Window window in _windows.values) {
-        window.resize(_lines,_columns);
+        window.resize(_lines, _columns);
       }
       refresh();
     }
@@ -194,8 +211,11 @@ class Screen {
   }
 
   void _onKeyBlocking(List<int> codes) {
-    _completer.complete(Key.fromCodes(codes));
-    _completer = Completer();
+    if (_awaitingGetch) {
+      _completer.complete(Key.fromCodes(codes));
+      _awaitingGetch = false;
+      _completer = Completer();
+    }
   }
 
   void _onKeyListen(Key key) {
@@ -210,6 +230,8 @@ class Screen {
       throw Exception(
           "Getch is not avaiable when using non-blocking listeners");
     }
+
+    _awaitingGetch = true;
     return await _completer.future.then((value) => value);
   }
 
