@@ -1,4 +1,8 @@
 
+import 'dart:io';
+
+import 'package:dcurses/src/utils/cloneable.dart';
+
 import '../enums/colour.dart';
 import '../enums/decoration.dart';
 
@@ -6,7 +10,7 @@ import '../enums/decoration.dart';
 ///
 ///Any escape code can be added through its' default constructor,
 ///or you can use any of the static methods for some pre-set ones
-class Modifier {
+class Modifier extends Cloneable{
 
   /// The actual escape code this modifier represents
   final String escapeCode;
@@ -55,6 +59,11 @@ class Modifier {
       case Decoration.hidden: return 8;
       case Decoration.strikethrough: return 9;
     }
+  }
+  
+  @override
+  Modifier clone() {
+    return Modifier(escapeCode);
   }
 
 }

@@ -16,7 +16,7 @@ class DialogWindow extends EditorWindow {
   }
 
   @override
-  void drawWindow() {
+  void draw() {
   }
 
   @override

@@ -1,10 +1,12 @@
 
-import 'modifier.dart';
+import 'package:dcurses/dcurses.dart';
+import 'package:dcurses/src/utils/cloneable.dart';
+
 
 /// Represents a single character on the terminal.
 /// 
 /// Can contain as many modifiers as you want, but only a single unicode value.
-class Ch {
+class Ch extends Cloneable {
 
   /// The modifiers that will be applied to this [Ch]
   final List<Modifier> modifiers;
@@ -26,6 +28,11 @@ class Ch {
       return hashCode==other.hashCode;
     }
     return false;
+  }
+  
+  @override
+  Ch clone() {
+    return Ch(value, cloneList(modifiers));
   }
 
 }

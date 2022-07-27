@@ -34,7 +34,7 @@ class MainWindow extends EditorWindow {
   void onKey(Key key) {}
 
   @override
-  void drawWindow() {
+  void draw() {
     _drawSprite();
     _drawBackgroundSelect();
   }

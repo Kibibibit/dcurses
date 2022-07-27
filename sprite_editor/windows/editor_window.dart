@@ -8,7 +8,7 @@ abstract class EditorWindow extends Window {
   final Editor editor;
 
   EditorWindow(this.editor, String label, int y, int x, int columns, int lines) : super(label, y, x, columns, lines) {
-    drawWindow();
+    draw();
   }
 
 
@@ -18,7 +18,6 @@ abstract class EditorWindow extends Window {
   Set<Key> getHotkeys();
   void onHotkey(Key hotkey);
   void onKey(Key key);
-  void drawWindow();
   void onFocusGain();
   void onFocusLoss();
 

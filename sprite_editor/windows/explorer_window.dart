@@ -2,7 +2,6 @@
 import 'dart:io';
 
 import 'package:dcurses/dcurses.dart';
-import 'package:dcurses/src/graphics/key.dart';
 
 import '../editor.dart';
 import 'editor_window.dart';
@@ -14,7 +13,7 @@ class ExplorerWindow extends EditorWindow {
   int selected = 0;
 
   @override
-  void drawWindow() {
+  void draw() {
       _drawAsync();
   }
 

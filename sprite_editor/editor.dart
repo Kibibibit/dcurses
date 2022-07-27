@@ -71,7 +71,7 @@ class Editor {
         for (Key key in keys) {
           _hotkeys[key] = w;
         }
-        (_screen.get(w) as EditorWindow).drawWindow();
+        (_screen.get(w) as EditorWindow).draw();
       }
     }
 
@@ -101,7 +101,7 @@ class Editor {
         Window? w = _screen.get(_hotkeys[key] ?? "");
         if (w != null && w is EditorWindow) {
           (w).onHotkey(key);
-          w.drawWindow();
+          w.draw();
           _screen.refresh();
           continue;
         }
@@ -175,7 +175,7 @@ class Editor {
       Window? w = _screen.get(focusedWindow!);
       if (w != null && w is EditorWindow) {
         w.onKey(key);
-        w.drawWindow();
+        w.draw();
         _screen.refresh();
       }
     }

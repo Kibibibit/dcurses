@@ -1,9 +1,7 @@
-import 'dart:math';
 
 import '../../dcurses.dart';
 
-
-class Window {
+abstract class Window {
   static int _lastZ = 0;
 
   late int lines, columns;
@@ -28,46 +26,35 @@ class Window {
     _lastBuffer = emptyBuffer(lines, columns);
   }
 
-
   List<List<Ch>> get buffer => _genBuffer(_buffer);
   List<List<Ch>> get lastBuffer => _genBuffer(_lastBuffer);
 
-
-
   void resize(int newLines, int newColumns) {
-
-    List<List<Ch>> newBuffer = emptyBuffer(newLines, newColumns);
-    List<List<Ch>> newLastBuffer = emptyBuffer(newLines, newColumns);
-
-    for (int y = 0; y < min(lines, newLines); y++) {
-      for (int x = 0; x < min(columns,newColumns); x++) {
-        newBuffer[y][x] = _buffer[y][x];
-        newLastBuffer[y][x] = _lastBuffer[y][x];
-      }      
-    }
 
     lines = newLines;
     columns = newColumns;
-    _buffer = newBuffer;
-    _lastBuffer = newLastBuffer;
 
+    clear();
+
+    draw();
   }
+
+  void draw();
 
   bool onScreen(int y, int x) =>
       (x < columns) && (x >= 0) && y < lines && y >= 0;
 
   List<List<Ch>> _genBuffer(List<List<Ch>> b) {
-
     List<List<Ch>>? out;
 
     if (borderFirst) {
-      out = _addBorder(b);
+      out = _addBorder(cloneList(b));
     }
     out = cloneList(out ?? b);
     if (!borderFirst) {
       out = _addBorder(out);
     }
-    
+
     return out;
   }
 
@@ -117,7 +104,8 @@ class Window {
 
   void remove() {
     if (onScreen(cy, cx)) {
-      _buffer[cy][cx] = Ch(_buffer[cy][cx].value, [Modifier.decoration(Decoration.hidden)]);
+      _buffer[cy][cx] =
+          Ch(_buffer[cy][cx].value, [Modifier.decoration(Decoration.hidden)]);
     }
   }
 

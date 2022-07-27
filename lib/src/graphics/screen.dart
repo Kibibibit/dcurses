@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
+import 'package:dcurses/dcurses.dart';
 import 'package:dcurses/src/graphics/key.dart';
 import 'package:dcurses/src/graphics/stdscr.dart';
 
@@ -38,7 +40,7 @@ class Screen {
   Screen() {
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
-    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines);
+    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines, (){});
     stdscr.screen = this;
     _buffer = emptyBuffer(_lines, _columns);
     _lastBuffer = emptyBuffer(_lines, _columns);
@@ -74,18 +76,13 @@ class Screen {
   }
 
   Future<void> run() async {
-    try {
-      await _run().catchError((err) => _errorOut(err));
-    } on Exception catch (error, stackTrace) {
-      _errorOut(error, stackTrace);
-    }
+    await _run().catchError((error) => _errorOut(error));
   }
 
-  void _errorOut([Exception? error, StackTrace? stackTrace]) {
-    print("Errored out!");
+  void _errorOut(Error error) {
     close();
-    if (error != null) print(error);
-    if (stackTrace != null) print(stackTrace);
+    print(error);
+    print(error.stackTrace);
     exit(1);
   }
 
@@ -99,11 +96,10 @@ class Screen {
         } else {
           _onKeyBlocking(event);
         }
-      } on Exception catch (error, stackTrace) {
-        _errorOut(error, stackTrace);
+      } on Error catch (error) {
+        _errorOut(error);
       }
-    },
-    onError: (err)=>_errorOut(err));
+    }, onError: (err) => _errorOut(err));
     _sigintSub = ProcessSignal.sigint.watch().listen((_) {
       close();
       exit(0);
@@ -111,11 +107,10 @@ class Screen {
     _sigwinchSub = ProcessSignal.sigwinch.watch().listen((_) {
       try {
         _onSigwinch();
-      } on Exception catch (error, stackTrace) {
-        _errorOut(error, stackTrace);
+      } on Error catch (error) {
+        _errorOut(error);
       }
-    },
-    onError: (err)=>_errorOut(err));
+    });
   }
 
   List<Window> _sortWindows() {
@@ -133,24 +128,19 @@ class Screen {
   Set<String> get windows => _windows.keys.toSet();
 
   void _onSigwinch() {
-    bool resize = false;
-    if (_lines != stdout.terminalLines) {
-      _lines = stdout.terminalLines;
-      resize = true;
+
+
+    _lines = stdout.terminalLines;
+    _columns = stdout.terminalColumns;
+
+    clear();
+
+    stdscr.resize(_lines, _columns);
+    for (Window window in _windows.values) {
+      window.resize(_lines, _columns);
     }
-    if (_columns != stdout.terminalColumns) {
-      _columns = stdout.terminalColumns;
-      resize = true;
-    }
-    if (resize) {
-      clear();
-      refresh();
-      stdscr.resize(_lines, _columns);
-      for (Window window in _windows.values) {
-        window.resize(_lines, _columns);
-      }
-      refresh();
-    }
+    refresh();
+    
   }
 
   void addWindow(Window window) {
