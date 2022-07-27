@@ -124,6 +124,7 @@ class Screen {
     }
     if (resize) {
       clear();
+      refresh();
       stdscr.resize(_lines,_columns);
       for (Window window in _windows.values) {
         window.resize(_lines,_columns);
