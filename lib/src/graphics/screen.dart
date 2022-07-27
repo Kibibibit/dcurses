@@ -102,7 +102,8 @@ class Screen {
       } on Exception catch (error, stackTrace) {
         _errorOut(error, stackTrace);
       }
-    });
+    },
+    onError: (err)=>_errorOut(err));
     _sigintSub = ProcessSignal.sigint.watch().listen((_) {
       close();
       exit(0);
@@ -113,7 +114,8 @@ class Screen {
       } on Exception catch (error, stackTrace) {
         _errorOut(error, stackTrace);
       }
-    });
+    },
+    onError: (err)=>_errorOut(err));
   }
 
   List<Window> _sortWindows() {
