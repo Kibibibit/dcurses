@@ -73,6 +73,19 @@ class Screen {
   }
 
   Future<void> run() async {
+
+    try {
+      await _run();
+    } on Exception catch (error,stackTrace) {
+      close();
+      print(error);
+      print(stackTrace);
+      exit(1);
+    }
+
+  }
+
+  Future<void> _run() async {
     hideCursor();
     _running = true;
     _streamSubscription = stdin.listen((event) => usingListener
