@@ -202,6 +202,7 @@ class Screen {
       _streamController!.close();
     }
     _sigintSub.cancel();
+    _sigwinchSub.cancel();
     _streamSubscription.cancel();
     clear();
     showCursor();

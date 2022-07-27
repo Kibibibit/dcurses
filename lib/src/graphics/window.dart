@@ -21,9 +21,7 @@ class Window {
 
   bool borderFirst = false;
 
-  Window(this.label, this.y, this.x, int columns, int lines) {
-    lines = lines;
-    columns = columns;
+  Window(this.label, this.y, this.x, this.columns, this.lines) {
     _buffer = emptyBuffer(lines, columns);
     _lastBuffer = emptyBuffer(lines, columns);
   }
