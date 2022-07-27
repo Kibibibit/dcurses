@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../../dcurses.dart';
 
 
@@ -30,8 +32,26 @@ class Window {
   List<List<Ch>> get buffer => _genBuffer(_buffer);
   List<List<Ch>> get lastBuffer => _genBuffer(_lastBuffer);
 
-  
-  void resize() {}
+
+
+  void resize(int newLines, int newColumns) {
+
+    List<List<Ch>> newBuffer = emptyBuffer(newLines, newColumns);
+    List<List<Ch>> newLastBuffer = emptyBuffer(newLines, newColumns);
+
+    for (int y = 0; y < min(lines, newLines); y++) {
+      for (int x = 0; x < min(columns,newColumns); x++) {
+        newBuffer[y][x] = _buffer[y][x];
+        newLastBuffer[y][x] = _lastBuffer[y][x];
+      }      
+    }
+
+    lines = newLines;
+    columns = newColumns;
+    _buffer = newBuffer;
+    _lastBuffer = newLastBuffer;
+
+  }
 
   bool onScreen(int y, int x) =>
       (x < columns) && (x >= 0) && y < lines && y >= 0;

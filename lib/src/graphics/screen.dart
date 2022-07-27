@@ -110,9 +110,9 @@ class Screen {
       resize = true;
     }
     if (resize) {
-      stdscr.resize();
+      stdscr.resize(_lines,_columns);
       for (Window window in _windows.values) {
-        window.resize();
+        window.resize(_lines,_columns);
       }
       refresh();
     }
