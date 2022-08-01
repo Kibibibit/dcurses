@@ -37,10 +37,10 @@ class Screen {
 
   StreamController<Key>? _streamController;
 
-  Screen() {
+  Screen([void Function()? stdscrDraw]) {
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
-    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines, () {});
+    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines, stdscrDraw ?? () {});
     stdscr.screen = this;
     _buffer = emptyBuffer(_lines, _columns);
     _lastBuffer = emptyBuffer(_lines, _columns);
