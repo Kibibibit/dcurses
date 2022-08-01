@@ -34,7 +34,7 @@ class MainWindow extends EditorWindow {
   void onKey(Key key) {}
 
   @override
-  void draw() {
+  void onDraw() {
     _drawSprite();
     _drawBackgroundSelect();
   }
@@ -45,11 +45,10 @@ class MainWindow extends EditorWindow {
     for (Ch c in _backgrounds) {
       cx = columns - _backgrounds.length + i - 1;
       cy = 1;
-
       if (i == _background) {
-        addStr(String.fromCharCode(0x25a3));
+        add(Ch(0x25C9));
       } else {
-        addStr(String.fromCharCode(0x25a1));
+        add(Ch(0x25CB));
       }
 
       cx = columns - _backgrounds.length + i - 1;

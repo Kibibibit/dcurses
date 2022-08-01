@@ -14,7 +14,7 @@ class ToolWindow extends EditorWindow {
   final Map<Tool, int> _icons = {Tool.pencil: 0x270E, Tool.eraser: 0x232B};
 
   @override
-  void draw() {
+  void onDraw() {
     cy = 1;
     for (Tool t in Tool.values) {
       cx = centerX - 1;

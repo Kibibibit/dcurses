@@ -13,7 +13,7 @@ class ExplorerWindow extends EditorWindow {
   int selected = 0;
 
   @override
-  void draw() {
+  void onDraw() {
       _drawAsync();
   }
 

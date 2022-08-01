@@ -26,7 +26,7 @@ class TopBar extends EditorWindow {
   void onKey(Key key) {}
 
   @override
-  void draw() {
+  void onDraw() {
 
   }
   

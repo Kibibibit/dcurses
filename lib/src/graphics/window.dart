@@ -34,12 +34,15 @@ abstract class Window {
     lines = newLines;
     columns = newColumns;
 
-    clear();
-
     draw();
   }
 
-  void draw();
+  void draw() {
+    clear();
+    onDraw();
+  }
+
+  void onDraw();
 
   bool onScreen(int y, int x) =>
       (x < columns) && (x >= 0) && y < lines && y >= 0;

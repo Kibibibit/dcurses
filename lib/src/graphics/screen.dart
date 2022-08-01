@@ -40,7 +40,7 @@ class Screen {
   Screen() {
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
-    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines, (){});
+    stdscr = Stdscr(stdscrLabel, 0, 0, _columns, _lines, () {});
     stdscr.screen = this;
     _buffer = emptyBuffer(_lines, _columns);
     _lastBuffer = emptyBuffer(_lines, _columns);
@@ -128,8 +128,6 @@ class Screen {
   Set<String> get windows => _windows.keys.toSet();
 
   void _onSigwinch() {
-
-
     _lines = stdout.terminalLines;
     _columns = stdout.terminalColumns;
 
@@ -140,7 +138,6 @@ class Screen {
       window.resize(_lines, _columns);
     }
     refresh();
-    
   }
 
   void addWindow(Window window) {
@@ -174,30 +171,29 @@ class Screen {
     windows.insert(0, stdscr);
 
     for (Window window in windows) {
+      window.draw();
+      List<List<Ch>> b = window.buffer;
       for (int y = 0; y < window.lines; y++) {
         for (int x = 0; x < window.columns; x++) {
           int xx = window.x + x;
           int yy = window.y + y;
-
-          if (_onScreen(yy, xx)) {
-            _buffer[yy][xx] = window.buffer[y][x];
+          if (_onScreen(yy, xx) && b[y][x].value != Ch.transparent) {
+            _buffer[yy][xx] = b[y][x];
           }
         }
       }
 
       window.updateBuffer();
     }
-
     for (int y = 0; y < _lines; y++) {
       for (int x = 0; x < _columns; x++) {
-        if (_lastBuffer[y][x] != _buffer[y][x]) {
-          stdout.write('\x1b[${y + 1};${x + 1}H');
-          for (Modifier mod in _buffer[y][x].modifiers) {
-            stdout.write(mod.escapeCode);
-          }
-          stdout.writeCharCode(_buffer[y][x].value);
-          stdout.write('\x1b[0m');
+        stdout.write('\x1b[${y + 1};${x + 1}H');
+
+        for (Modifier mod in _buffer[y][x].modifiers) {
+          stdout.write(mod.escapeCode);
         }
+        stdout.writeCharCode(_buffer[y][x].value);
+        stdout.write('\x1b[0m');
         _lastBuffer[y][x] = _buffer[y][x];
       }
     }
