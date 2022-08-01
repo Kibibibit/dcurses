@@ -1,14 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'package:dcurses/dcurses.dart';
-import 'package:dcurses/src/graphics/key.dart';
 import 'package:dcurses/src/graphics/stdscr.dart';
-
-import '../utils/empty_buffer.dart';
-import 'ch/ch.dart';
-import 'ch/modifier.dart';
-import 'window.dart';
 
 class Screen {
   static final String stdscrLabel = ":::STDSCR:::";
@@ -187,14 +180,16 @@ class Screen {
     }
     for (int y = 0; y < _lines; y++) {
       for (int x = 0; x < _columns; x++) {
-        stdout.write('\x1b[${y + 1};${x + 1}H');
+        if (_buffer[y][x] != _lastBuffer[y][x]) {
+          stdout.write('\x1b[${y + 1};${x + 1}H');
 
-        for (Modifier mod in _buffer[y][x].modifiers) {
-          stdout.write(mod.escapeCode);
+          for (Modifier mod in _buffer[y][x].modifiers) {
+            stdout.write(mod.escapeCode);
+          }
+          stdout.writeCharCode(_buffer[y][x].value);
+          stdout.write('\x1b[0m');
+          _lastBuffer[y][x] = _buffer[y][x];
         }
-        stdout.writeCharCode(_buffer[y][x].value);
-        stdout.write('\x1b[0m');
-        _lastBuffer[y][x] = _buffer[y][x];
       }
     }
   }

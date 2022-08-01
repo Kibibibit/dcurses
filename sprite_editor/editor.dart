@@ -4,6 +4,7 @@ import 'editing_sprite.dart';
 import 'editor_mode.dart';
 import 'tool.dart';
 import 'windows/editor_window.dart';
+import 'windows/explorer_window.dart';
 import 'windows/main_window.dart';
 import 'windows/palette_window.dart';
 import 'windows/tool_window.dart';
@@ -21,6 +22,9 @@ class Editor {
   late Window _mainWindow;
   late Window _paletteWindow;
   late Window _topBar;
+  Window? _explorerWindow;
+
+  static final String _explorerWindowLabel = "explorerWindow";
 
   Tool tool = Tool.pencil;
 
@@ -77,19 +81,19 @@ class Editor {
 
     _screen.refresh();
   }
+  void refresh() {
+    _screen.refresh();
+  }
 
   Future<void> run() async {
     _screen.run();
     running = true;
     while (running) {
-      if (_exploring) {
-        
-        return;
-      }
+      _screen.refresh();
       _focus();
       Key key = await _screen.getch();
 
-      if (key == Key.home && focusedWindow != _mainWindow.label) {
+      if (key == Key.home && focusedWindow != _mainWindow.label && !_exploring) {
         editorMode = EditorMode.focused;
         focusedWindow = _mainWindow.label;
         _focusX = 1;
@@ -167,7 +171,7 @@ class Editor {
   }
 
   void _focused(Key key) {
-    if (key == Key.esc) {
+    if (key == Key.esc && !_exploring) {
       editorMode = EditorMode.unfocused;
       return;
     }
@@ -179,6 +183,14 @@ class Editor {
         _screen.refresh();
       }
     }
+  }
+
+  void loadSprite() {
+    _explorerWindow = ExplorerWindow(this, _explorerWindowLabel, 0, 0, _screen.columns, _screen.lines);
+    _exploring = true;
+    focusedWindow = _explorerWindowLabel;
+    _screen.addWindow(_explorerWindow!);
+
   }
 
   void _cleanup() {

@@ -44,6 +44,6 @@ class TopBar extends EditorWindow {
   }
 
   void _loadSprite() {
-    
+    editor.loadSprite();
   }
 }
